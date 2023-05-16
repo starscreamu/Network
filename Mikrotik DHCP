@@ -1,0 +1,8 @@
+/ip pool
+add name=dhcp-pool1 ranges=192.168.15.101-192.168.15.200
+
+/ip dhcp-server
+add address-pool=dhcp-pool1 disabled=no interface=ether1 lease-time=3d name=dhcp-server1
+
+/ip dhcp-server network
+add address=192.168.15.0/24 dns-server=192.168.15.10 gateway=192.168.15.1 netmask=24 wins-server=192.168.15.10
