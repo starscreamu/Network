@@ -1,0 +1,5 @@
+/system logging
+/add action=remote topics=info
+/add action=remote topics=error
+
+/system logging action set 3 remote = 192.168.100.254 src-address = 192.168.100.1
