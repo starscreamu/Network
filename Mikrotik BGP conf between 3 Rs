@@ -1,0 +1,15 @@
+R2:
+/routing bgp instance set default as=2 redistribute-static=no redistribute-connected=no
+/routing bgp network add network=your_nets synchronize=no
+/routing bgp peer add remote-address=peer_remote_addr remote-as=1 instance=default
+/routing bgp peer add remote-address=peer_remote_addr remote-as=3 instance=default 
+
+R1:
+/routing bgp instance set default as=1 redistribute-static=no redistribute-connected=no
+/routing bgp network add network=your_nets synchronize=no
+/routing bgp peer add remote-address=peer_remote_addr remote-as=2 instance=default
+
+R3:
+/routing bgp instance set default as=3 redistribute-static=no redistribute-connected=no
+/routing bgp network add network=your_nets synchronize=no
+/routing bgp peer add remote-address=peer_remote_addr remote-as=2 instance=default
