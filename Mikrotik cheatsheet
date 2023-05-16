@@ -1,4 +1,9 @@
 Microtik
+
+Настройка Firewall MikroTik CLI
+Настройка маскарадинга, чтобы чтобы внутренняя сеть не была видна с WAN порта:
+ip firewall nat add chain=srcnat action=masquerade out-interface=интерфейс провайдера
+
 ################# CREATE SUBINTERFACE ######################
 /interface vlan add interface="ether1" vlan-id=100 name=VLAN100
 /ip address add interface=VLAN100 address=192.168.100.1/24
