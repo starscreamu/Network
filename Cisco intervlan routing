@@ -1,0 +1,21 @@
+Via ACLs
+access-list 130 deny ip 192.168.30.0 0.0.0.255 192.168.50.0 0.0.0.255
+access-list 130 permit ip any any
+access-list 150 deny ip 192.168.50.0 0.0.0.255 192.168.30.0 0.0.0.255
+access-list 150 permit ip any any
+interface Vlan50
+ip access-group 150 in
+interface Vlan30
+ip access-group 130 in
+
+or
+
+access-list 30 deny ip 192.168.30.0 0.0.0.255
+access-list 30 permit ip any
+access-list 50 deny ip 192.168.50.0 0.0.0.255
+access-list 50 permit ip any
+interface Vlan50
+ip access-group 30 out
+interface Vlan30
+ip access-group 50 out
+
