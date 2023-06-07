@@ -1,0 +1,1 @@
+ip firewall nat add chain=srcnat action=masquerade out-interface=your_out_interface
