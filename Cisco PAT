@@ -1,0 +1,23 @@
+#If NAT pool is to be of several addr.
+
+Router(config)# ip nat pool MerionNetworksPool2 208.165.100.5 208.165.100.15 netmask 255.255.255.0 # Pool for translation outside
+Router(config)# access-list 1 permit 192.168.0.0 0.0.255.255 # List of permited addresses
+Router(config)#ip nat inside source list 1 pool MerionNetworksPool2 overload # Start PAT 
+Router(config)#interface serial0/0/0
+Router(config-if)#ip nat inside
+Router(config-if)#exit
+Router(config)#interface serial0/1/0
+Router(config-if)#ip nat outside
+
+#If not
+
+Router(config)# access-list 1 permit 192.168.0.0 0.0.255.255
+Router(config)# ip nat source list 1 interface serial0/1/0 overload
+Router(config)# interface serial0/0/0 # Inside int.
+Router(config-if)#ip nat inside
+Router(config-if)#exit
+Router(config)# interface serial0/1/0 # Outside int.
+Router(config-if)#ip nat outside
+
+show ip nat statistics
+debug ip nat
