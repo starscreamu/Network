@@ -1,0 +1,9 @@
+R1(config)#username R2 password cisco
+R1(config)#int (the one which goes to R2)
+R1(config-if)#encapsulation ppp
+R1(config-if)#ppp authentication chap
+
+R2(config)#username R1 password cisco
+R2(config)#int (the one which goes to R1)
+R2(config-if)#encapsulation ppp
+R2(config-if)#ppp authentication chap
