@@ -1,0 +1,53 @@
+############### IPSEC TUNNEL ######################
+
+#Mikrotik1
+
+#Настройка интерфейса ipip
+
+/interface ipip
+
+add allow-fast-path=no clamp-tcp-mss=no name=ipip-vpn remote-address=10.20.20.20 ipsec-secret=ipsec-password
+
+#Установка ip адреса на ipip интерфейс
+
+/ip address
+
+add address=10.30.30.1/30 interface=ipip-vpn
+
+#Статический маршрут до удаленной подсети
+
+/ip route
+
+add distance=1 dst-address=192.168.200.0/24 gateway=10.30.30.2
+
+
+
+#Mikrotik2
+
+#Все аналогично, меняются только адреса и подсети
+
+/interface ipip 
+
+add allow-fast-path=no clamp-tcp-mss=no name=ipip-vpn remote-address=10.10.10.10 ipsec-secret=ipsec-password
+
+/ip address
+
+add address=10.30.30.2/30 interface=ipip-vpn
+
+/ip route
+
+add distance=1 dst-address=192.168.100.0/24 gateway=10.30.30.1
+
+############ SSH CONNECT WITH CERT #############
+
+root@ubuntu:# ssh-kegen -t rsa -m PEM -f server #генерируем приватный и публичный ключ
+
+root@ubuntu:# scp server user@192.168.2.1:/ #копипастим приватный ключ на микротик
+
+root@ubuntu:# scp server.pub user@192.168.2.1:/ #копипастим публичный ключ на микротик
+
+root@ubuntu:# $ eval "$(ssh-agent -s)" #запускаем ssh-agent
+
+root@ubuntu:# ssh-add server #Добавляем в ssh-agent приватный ключ
+
+user ssh-keys private import user=user public-key-file=server.pub private-key-file=server #добваляем сертификаты в микротике
