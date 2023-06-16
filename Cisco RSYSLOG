@@ -1,0 +1,37 @@
+В Cisco добавляем
+logging trap debugging
+logging facility local6
+logging 172.27.1.43
+
+Уровни логирования Cisco:
+
+  <0-7>          Logging severity level
+  alerts         Immediate action needed           (severity=1)
+  critical       Critical conditions               (severity=2)
+  debugging      Debugging messages                (severity=7)
+  emergencies    System is unusable                (severity=0)
+  errors         Error conditions                  (severity=3)
+  informational  Informational messages            (severity=6)
+  notifications  Normal but significant conditions (severity=5)
+  warnings       Warning conditions                (severity=4)
+
+
+на Ubuntu в /etc/rsyslog.d/50-default.conf добавляем.
+
+#cisco3560
+local6.*  -/var/log/cisco3560.log
+
+и раскомментируем строки в /etc/rsyslog.conf:   UDP PROTOCOL!!!!!!!!
+
+module(load="imudp")
+input(type="imudp" port="514")  
+
+перезапускаем службу
+systemctl restart rsyslog
+
+PS. rsyslog работает на порту 514 udp
+
+Результат
+
+Jan  4 11:59:32 172.27.1.250 2184: 1w4d: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/43, changed state to down
+Jan  4 11:59:34 172.27.1.250 2185: 1w4d: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/43, changed state to up
