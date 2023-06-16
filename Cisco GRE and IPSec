@@ -1,0 +1,48 @@
+Настройка Gre туннеля на 1 роутере
+int tunnel 1
+ip address 5.5.5.1 255.255.255.252
+tunnel mode gre ip
+tunnel source GigabitEthernet 0/0/1 (Вы пишите свой интерфейс)
+tunnel destination 20.20.20.2
+exit
+Настройка Gre туннеля на 2 роутере
+int tunnel 1
+ip address 5.5.5.2 255.255.255.252
+tunnel mode gre ip
+tunnel source GigabitEthernet 0/0/1 (Вы пишите свой интерфейс)
+tunnel destination 10.10.10.1
+exit
+
+Для начала необходимо указать, откуда куда трафик будет шифроваться. Для этого создадим правило ACL:
+access-list 102 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255 – запросы из сети 192.168.1.0 в сеть 192.168.2.0 будут зашифрованы. Сеть 192.168.1.0 находится на маршрутизаторе Router6, а сеть 192.168.2.0 на Router7
+Далее необходимо настроить крипто политику
+R6(config)# crypto isakmp policy 102 
+R6(config-isakmp)# encryption aes  - шифрование с помощью aes
+R6(config-isakmp)# authentication pre-share – аутентификация с помощью обычного ключа
+R6(config-isakmp)# group 5 
+R6(config-isakmp)# exit
+R6(config)# crypto isakmp key cisco address 2.2.2.2 – создание ключа, по которому будет происходить аутентификация. 2.2.2.2 – адрес соседа, cisco в этой команде это ключ, по которому будет происходить аутентификация. На втором роутере он должен совпадать
+
+Далее мы указываем параметры для обработки трафика transform-set. 
+На обоих маршрутизаторах они должны совпадать. Т.е указываем, какими алгоритмами шифрования будет шифроваться трафик. R1_R2_Set – название transorm-set.
+
+R6(config)# crypto ipsec transform-set R1_R2_Set esp-aes esp-sha-hmac 
+
+Затем необходимо создать криптографическое сопоставление (crypto map) VPN-MAP, которое связывает вместе все параметры 2 фазы.
+crypto map R2_R1_Map 102 ipsec-isakmp  
+set peer 1.1.1.1 – адрес соседа
+set transform-set R2_R1 – указываем название созданного ранее transform-set
+match address 102 – указываем номер ACL (т.е говорим, какой трафик будет шифроваться)
+
+Далее переходим на внешний интерфейс роутера и примняем crypto map на нем
+
+R6(config)#interface gi0/0/0
+R6(config)#crypto map R2_R1_Map
+
+Проверка работоспособности:
+Из привилегированного режима выполним следующую команду:
+
+Router#show crypto ipsec sa 
+
+interface: FastEthernet0/1
+Crypto map tag: R2_R1_Map, local addr 2.2.2.2
