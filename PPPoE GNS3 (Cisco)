@@ -1,0 +1,30 @@
+R1 будет в качестве сервера PPoE
+R2 в качестве клиента
+Настройка на R1:
+Conf t
+bba-group pppoe NEW
+virtual-template 1
+exit
+interface virtual-template 1
+ip address 10.10.10.1 255.255.255.0
+peer default ip address pool NAMEPOOL
+no sh
+exit
+ip local pool NAMEPOOL 10.10.10.2 10.10.10.10
+interface fastEthernet 0/0
+pppoe enable group NEW
+no sh
+exit
+Настройка на R2(клиенте)
+Conf t
+interface dialer 1
+dialer pool 1
+encapsulation ppp
+ip address negotiated
+mtu 1492	
+exit
+interface FastEthernet 0/0
+pppoe-client dial-pool-number 1
+no sh
+Проверка на клиенте:
+Show ip interface brief
