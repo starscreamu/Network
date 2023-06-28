@@ -12,7 +12,7 @@ Router(config-if)#ip nat outside
 #If not
 
 Router(config)# access-list 1 permit 192.168.0.0 0.0.255.255
-Router(config)# ip nat source list 1 interface serial0/1/0 overload
+Router(config)# ip nat inside source list 1 interface serial0/1/0 overload
 Router(config)# interface serial0/0/0 # Inside int.
 Router(config-if)#ip nat inside
 Router(config-if)#exit
