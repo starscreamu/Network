@@ -3,6 +3,8 @@ logging trap debugging
 logging facility local6
 logging 172.27.1.43
 
+service timestamps log datetime msec
+
 Уровни логирования Cisco:
 
   <0-7>          Logging severity level
