@@ -3,4 +3,19 @@ https://www.youtube.com/watch?v=STSw89OW9ww&list=PLcDkQ2Au8aVNYsqGsxRQxYyQijILa9
 
 DMZ Sec.lvl 50 
 
+На роутере можно использовать inspect вместо ASA
+ip inspect name NAME http,icmp ...
 
+К примеру, если при помощи ACL доступен только Веб-сервер в сети, а остальным запрещен, то инета во внутренней сети не будет, так как входящий трафик запрещен
+ip access-list extended FROM-OUTSIDE 
+permit icmp any host 210.210.3.2 
+permit tcp any host 210.210.3.2 eq www
+deny ip any any 
+ip access-group FROM-OUTSIDE in # на внешний инт.
+
+Далее 
+ip inspect name Inside-Outside tcp # с внут. сети во внешнюю
+ip inspect name Inside-Outside icmp
+ip inspect name Inside-Outside http
+Далее зайти на внут.инт
+ip inspect Inside-Outside in 
