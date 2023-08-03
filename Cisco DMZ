@@ -17,5 +17,14 @@ ip access-group FROM-OUTSIDE in # на внешний инт.
 ip inspect name Inside-Outside tcp # с внут. сети во внешнюю
 ip inspect name Inside-Outside icmp
 ip inspect name Inside-Outside http
+
 Далее зайти на внут.инт
 ip inspect Inside-Outside in 
+
+Далее запрет трафика от DMZ сервера во внут.сеть
+ip access-list extended FROM-DMZ
+ip deny any host 210.210.3.2 (ip dmz сервера) 192.168.1.0 0.0.0.255 
+permit ip any any
+
+Далее привязка ACL к интерфейсу DMZ
+ip access-group FROM-DMZ in
