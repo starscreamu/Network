@@ -11,3 +11,10 @@ exit
 service-policy global police global 
 
 global policy - трафик во всех направлениях 
+
+#NAT 
+
+object network NAME 
+subnet 192.168.0.0 255.255.255.0 
+nat (inside,outside) dynamic interface 
+interface это команда!!! не сам интерфейс
