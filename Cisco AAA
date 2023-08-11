@@ -1,0 +1,31 @@
+Пример настройки на Cisco 2911/K9 15.0(1r)M12
+cisco(config)#aaa new-model
+
+cisco(config)#radius server NPS
+cisco(config-radius-server)#address ipv4 10.10.10.1 auth-port 1645 acct-port 1646
+cisco(config-radius-server)#key CISCO
+cisco(config-radius-server)#exit
+
+cisco(config)#aaa group server radius NPS
+cisco(config-sg-radius)#server name NPS
+cisco(config-sg-radius)#exit
+
+cisco(config)#aaa authentication login NPS group NPS local
+cisco(config)#aaa authorization exec NPS group NPS local
+cisco(config)#aaa authorization console
+
+cisco(config)#line console 0
+cisco(config-line)#authorization exec NPS
+cisco(config-line)#login authentication NPS
+
+cisco(config)#line vty 0 4
+cisco(config-line)#session-timeout 30
+cisco(config-line)#authorization exec NPS
+cisco(config-line)#login authentication NPS
+cisco(config-line)#transport input ssh
+
+cisco(config)#line vty 5 15
+cisco(config-line)#session-timeout 30
+cisco(config-line)#authorization exec NPS
+cisco(config-line)#login authentication NPS
+cisco(config-line)#transport input none
