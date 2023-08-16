@@ -1,3 +1,5 @@
+https://ciscotips.ru/ppp
+
 R1(config)#username R2 password cisco
 R1(config)#int (the one which goes to R2)
 R1(config-if)#encapsulation ppp
