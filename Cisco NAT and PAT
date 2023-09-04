@@ -22,8 +22,8 @@ int f0/0
 ip nat inside
 int f0/1
 ip nat outside
-access-list 1 permit 10.0.0.0 0.0.0.255
+access-list NAT-SOURCES permit 10.0.0.0 0.0.0.255
 ip nat pool PUBLICIPS 155.4.12.1 155.4.12.3 netmask 255.255.255.0
-ip nat inside source list 1 pool PUBLISIPS interface serial0/1/0 #can also use overload 
+ip nat inside source list NAT-SOURCES pool PUBLISIPS interface serial0/1/0 #can also use overload 
 
 #NOTE if you forget to put overload - only the 1st PC to access the outside network will have a connection because it caches NAT translations
