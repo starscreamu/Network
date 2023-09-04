@@ -25,3 +25,5 @@ ip nat outside
 access-list 1 permit 10.0.0.0 0.0.0.255
 ip nat pool PUBLICIPS 155.4.12.1 155.4.12.3 netmask 255.255.255.0
 ip nat inside source list 1 pool PUBLISIPS  #can also use overload cmd
+
+#NOTE if you forget to put overload - only the 1st PC to access the outside network will have a connection
