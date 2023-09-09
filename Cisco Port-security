@@ -1,1 +1,5 @@
+switchport host 
+show mac address-table
+show port-security
+switchport port-security
 
