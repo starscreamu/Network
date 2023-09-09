@@ -2,4 +2,6 @@ switchport host
 show mac address-table
 show port-security
 switchport port-security
-
+switchport port-security maximum 5 (any number)
+switchport port-security sticky
+switchport port-security violation restrict/shutdown/protect
