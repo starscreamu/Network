@@ -5,3 +5,8 @@ switchport port-security
 switchport port-security maximum 5 (any number)
 switchport port-security sticky
 switchport port-security violation restrict/shutdown/protect
+
+#Auto int recovery
+show errdisable recovery
+errdisable recovery cause psecure-violation
+errdisable recovety interval 30  (in sec)
