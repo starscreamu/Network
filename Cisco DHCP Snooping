@@ -1,8 +1,11 @@
+https://www.raisecom.su/articles/53117/
+
 ip dhcp snooping
 show ip dhcp snooping 
 ip dhcp snooping vlan 1
 int fa0/1
 ip dhcp snooping trust #to a trusted serv ofc
+no ip dhcp snooping information option
 
 #source guard
 ip verify source port-security
