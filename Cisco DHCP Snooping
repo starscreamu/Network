@@ -1,0 +1,6 @@
+ip dhcp snooping
+show ip dhcp snooping 
+ip dhcp snooping vlan 1
+int fa0/1
+ip dhcp snooping trust #to a trusted serv ofc
+
