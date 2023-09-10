@@ -4,3 +4,6 @@ ip dhcp snooping vlan 1
 int fa0/1
 ip dhcp snooping trust #to a trusted serv ofc
 
+#source guard
+ip verify source port-security
+show ip verify source
