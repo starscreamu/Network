@@ -1,0 +1,16 @@
+#One of the ways to implement DAI is via DHCP Snooping
+
+#Verify that DHCP Snooping is working
+
+ip dhcp snooping binding
+
+ip arp inspection vlan 30
+int g0/0
+ip arp inspection trust #to Router
+show ip arp inspection vlan 30
+
+#For none DHCP clients we create a static entry
+
+arp access-list OUR-LIST
+permit ip host 10.0.0.2(the host which has static ip) mac host 0015.15dd.1234
+ip arp inspection filter OUR-LIST
