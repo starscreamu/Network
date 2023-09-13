@@ -1,5 +1,12 @@
 #One of the ways to implement DAI is via DHCP Snooping
 
+#ARP spoof won't work
+
+#Also there is a limit for ARP massages on an interface per second (15)
+
+ip arp inspection limit rate 100
+ip arp inspection interfaces
+
 #Verify that DHCP Snooping is working
 
 ip dhcp snooping binding
@@ -16,3 +23,7 @@ ip arp inspection statistics
 arp access-list OUR-LIST
 permit ip host 10.0.0.2(the host which has static ip) mac host 0015.15dd.1234
 ip arp inspection filter OUR-LIST
+
+#Additional validation check which is nott enabled by default
+
+ip arp inpection validate dst-mac ip src-mac
