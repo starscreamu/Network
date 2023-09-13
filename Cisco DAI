@@ -8,6 +8,8 @@ ip arp inspection vlan 30
 int g0/0
 ip arp inspection trust #to Router
 show ip arp inspection vlan 30
+ip arp inspection statistics
+
 
 #For none DHCP clients we create a static entry
 
