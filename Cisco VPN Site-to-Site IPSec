@@ -1,1 +1,7 @@
 #phase2 is user traffic/IPSec SA
+#crypto-map is a combination of settings for IPSec tunnels
+
+show crypto isakmp sa #1st tunnel data
+show crypto ipsec sa #2nd tunnel data
+show crypto engine connections active
+show crypto map
