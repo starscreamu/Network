@@ -5,3 +5,6 @@ show crypto isakmp sa #1st tunnel data
 show crypto ipsec sa #2nd tunnel data
 show crypto engine connections active
 show crypto map
+
+int g0/0
+crypto map OUR-MAP
