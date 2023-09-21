@@ -1,6 +1,6 @@
 https://www.raisecom.su/articles/53117/
+https://community.fs.com/ru/blog/what-is-dhcp-snooping-and-how-it-works.htmlip dhcp snooping
 
-ip dhcp snooping
 show ip dhcp snooping 
 ip dhcp snooping vlan 1
 int fa0/1
