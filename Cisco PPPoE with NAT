@@ -1,0 +1,62 @@
+conf t
+
+int dialer 1
+ ip address negotiated
+ ip mtu 1492
+ ip nat outside
+ encapsulation ppp
+ ip tcp adjust-mss 1452
+ dialer pool 10
+ dialer-group 1
+ ppp authentication chap callin
+ ppp chap hostname ************
+ ppp chap password ************
+ ppp ipcp route default
+ ppp ipcp dns request
+ ppp ipcp address accept
+ exit
+
+vpdn enable
+vpdn-group 1
+  request-dialin
+  exit
+ exit
+
+int fa0/1
+ no shut
+ pppoe enable group global
+ pppoe-client dial-pool-number 10
+ exit
+
+int fa0/0
+ ip address 10.0.2.1 255.255.255.0
+ no shut
+ ip nat inside
+ no cdp enable
+ no mop enabled
+ exit
+
+conf t
+
+ip dhcp excluded-address 10.0.2.1 10.0.2.25
+ip dhcp excluded-address 192.168.1.253 192.168.1.254
+
+ip dhcp pool Homepool
+ network 10.0.2.0 255.255.255.0
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name local.lan
+ default-router 10.0.2.1
+ exit
+
+conf t
+ip nat inside source list 10 interface dialer 1  #Probably should put an overload here
+
+access-list 10 permit 10.0.2.0 0.0.0.255
+
+no cdp run
+
+int fa0/0
+ description Lan Side
+
+int fa0/1
+ description ISP Side
