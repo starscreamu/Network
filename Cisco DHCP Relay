@@ -1,1 +1,3 @@
-https://habr.com/ru/articles/89997/
+https://habr.com/ru/articles/89997
+
+ip helper-address x.x.x.x #Your DHCP server
