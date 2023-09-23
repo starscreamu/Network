@@ -1,0 +1,282 @@
+https://linkas.ru/articles/nastroyka-cisco-2801/
+
+aaa new-model
+!
+aaa authentication login vpn_xauth_1 local
+aaa authorization network vpn_group_1 local
+username cisco password cisco // Создание пользователя
+crypto isakmp policy 1 // Настройка шифрования и обмена ключами
+ encr 3des
+ authentication pre-share
+ group 2
+crypto isakmp client configuration group remote-clients
+ key megakey123
+ dns 192.168.1.10
+ domain domain.local
+ pool POOL_1
+ acl 100
+crypto isakmp profile ike-profile-1
+   match identity group remote-clients
+   client authentication list vpn_xauth_1
+   isakmp authorization list vpn_group_1
+   client configuration address respond
+   virtual-template 1
+crypto ipsec transform-set transform-1 esp-3des esp-sha-hmac
+crypto ipsec profile Cisco_Profile1
+ set transform-set transform-1
+ set isakmp-profile ike-profile-1
+Настройка виртуального туннеля interface Virtual-Template1 type tunnel
+ ip unnumbered GigabitEthernet0/1
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile Cisco_Profile1
+ip local pool POOL_1 192.168.7.1 192.168.7.100
+access-list 100 permit ip 192.168.0.0 0.0.255.255 any
+
+
+
+На роутере:
+
+interface FastEthernet0/0.777
+           encapsulation dot1Q 777
+           ip address 7.xx.yy.1 255.255.255.0
+           ip helper-address 7.xx.0.7 // Для DHCP relay, где 7.xx.0.7 – адрес Asterisk, раздающего DHCP для сети телефонии
+           no cdp enable
+          arp timeout 60
+
+На коммутаторе:
+
+# conf t
+
+порты для телефонов:
+
+Int fa0/2
+switchport port-security
+switchport port-security maximum 5 
+switchport voice vlan 777
+
+Настройка trunk:
+
+# conf t
+ Int fa0/1
+ switchport mode trunk
+
+Все же, для полноценной настройки стоит привести разобранный конфигурационный файл без использования платформы Asterisk.
+
+Исходные данные: Cisco 2801, IP Phone 7912 и IP Phone 2960G. При этом соединение с ТФОП осуществляется через 2FXO.
+
+Нам будут необходимы следующие файлы:
+
+• c2801-spservicesk9-mz.124-8.bin IOS с поддержкой CME
+• cme-124-9T.zip Файлы CME 4.0 для IOS 12.4(9)T
+
+Настройка TFTP, NTP и DHCP сервера:
+
+clock timezone MSK 3
+clock summer-time MSD recurring last Sun Mar 2:00 last Sun Oct 3:00
+
+Настройка DHCP немного отличается от той, которая была описана ранее:
+
+ip dhcp excluded-address 10.255.100.1 
+ip dhcp excluded-address 10.255.100.2
+!
+ip dhcp pool Test_Pool
+   network 10.255.100.0 255.255.255.0
+   default-router 10.255.100.1
+   domain-name home.dreamcatcher.ru
+   dns-server 10.255.100.2
+   option 150 ip 10.255.100.1
+!
+tftp-server flash:P00307020200.bin
+tftp-server flash:P00307020200.loads
+tftp-server flash:P00307020200.sbn
+tftp-server flash:P00307020200.sb2
+!
+ntp clock-period 17178241
+ntp server 10.1.1.100
+!
+
+Теперь - главное. Настройка службы telephony-service:
+
+1) Указываем имя прошивки для IP Phone 7960
+2) Задаем максимальное количество IP Phone. Для маршрутизатора Cisco 2801 = 30 штук. 
+3) Задаем максимальное количество номеров, присваиваемых IP Phone и обычным телефонам, подключенным с помощью ATA 186/ATA 188.
+4) Указываем адрес голосового шлюза. 
+5) Указываем таймаут звонка.
+6) Системное сообщение, отображаемое на телефоне.
+7) Задаем local. 
+8) Формат времени и даты. Рекомендуется наличие NTP сервера.
+9) create cnf-files - Эта команда создает XML файлы конфигурации IP Phone, ее формат.
+10) Задаем максимальное количество одновременных конференций.
+11) Music on Hold - музыка на удержание.
+12) Задаем возможность перенаправления звонков.
+
+telephony-service
+ load 7960-7940 P00307020200
+ max-ephones 10
+ max-dn 150
+ ip source-address 10.255.100.1 port 2000
+ timeouts ringing 60
+ system message Dreamcatcher IP PHONE
+ user-locale RU
+ time-format 24
+ date-format dd-mm-yy
+ create cnf-files version-stamp 7960 Jul 18 2006 12:38:44
+ max-conferences 4 gain -6
+ call-forward pattern .T
+ moh music-on-hold.au
+ transfer-system full-consult
+ transfer-pattern .T
+!
+Указываем выход в ТФОП через FXO (в данном случае, в ТФОП пойдут все номера, начинающиеся на 9):
+!
+voice-port 0/0/0
+ description --- To PSTN ---
+!
+!
+dial-peer voice 100 pots
+ destination-pattern 9T
+ port 0/0/0
+!
+Создаем образцово-показательный телефон 7960, с двумя линиями, номером 8888, переадресацией звонков при "абонент не отвечает" и "абонент занят" на номер 8887.
+!
+ephone-dn  1
+ number 8888
+ label Last Name
+ description Last Name
+ name Last Name
+ preference 1
+ call-forward busy 8887
+ call-forward noan 8887 timeout 10
+ no huntstop
+!
+!
+ephone-dn  2
+ number 8888
+ label Last Name
+ description Last Name
+ name Last Name
+ preference 1
+!
+Задаем для этого телефона два номера быстрого набора (автоматически они прикрепятся к третьей и четвертым кнопкам) и вешаем входящие линии на первую и вторую кнопки соответственно.
+!
+ephone  1
+ mac-address 0017.0E94.79A7
+ speed-dial 1 8887
+ speed-dial 2 8889
+ type 7960
+ button  1:1 2:2
+!
+С телефоном 7912 все аналогично просто:
+!
+ephone-dn  6
+ number 8886
+ label Last Name Home
+ description Last Name Home
+ name Last Name Home
+ call-forward noan 8888 timeout 25
+!
+!
+ephone  4
+ mac-address 0017.E0B2.8962
+ speed-dial 1 8887
+ speed-dial 2 8888
+ speed-dial 3 8889
+ type 7912
+ button  1:6
+!
+Теперь привяжем один из телефонов прямым транком ко второму порту FXO:
+!
+voice-port 0/0/1
+ description --- Trunk ---
+ connection plar opx 8887
+!
+!
+dial-peer voice 110 pots
+ destination-pattern 82
+ port 0/0/1
+!
+!
+ephone-dn  4
+ number 8889
+ label ForLast Name
+ description ForLast Name
+ name ForLast Name
+ no huntstop
+ trunk 82
+!
+!
+ephone-dn  5
+ number 8889
+ label ForLast Name
+ description ForLast Name
+ name ForLast Name
+ preference 1
+!
+!
+!
+ephone  3
+ mac-address 0017.5987.8614
+ speed-dial 1 8888
+ speed-dial 2 8887
+ type 7960
+ button  1:4 2:5
+!
+
+
+!
+voice service voip
+  allow connections sip to sip
+  sip
+    registrar server expires max 3600 min 3600
+!
+voice register dn  1
+ number 202
+!
+voice register pool  1
+ id mac 5CDA.D46C.9686
+ number 1 dn 1
+ username 202 password 123
+ codec g711ulaw
+Чтобы связать между собой устройства с разными протоколами (SCCP устройства привязаны к Cisco, SIP - к серверу) на Asterisk необходимо использовать следующие настройки:
+[cisco]
+type=peer
+context=voiplab
+host=192.168.15.9
+insecure=port
+dissalow=all
+allow=ulaw
+allow=alaw
+secret=cisco
+[voiplab]
+exten => 301,1,Dial(SIP/301,,tT)
+exten => 302,1,Dial(SIP/302,,tT)
+exten => 303,1,Dial(SIP/303,,tT)
+exten => 201,1,Dial(SIP/${EXTEN}@cisco)
+И еще немного настроек на роутере. Часть из нижеприведенных конфигураций была приведена выше - настройка telephony-service, прописывание адресов, шлюзов и т.п.
+!
+telephony-service
+ max-ephones 2
+ max-dn 4
+ ip source-address 192.168.15.9 port 2000
+!
+ephone-dn  1  dual-line
+ number 201
+ label CIPC
+!
+!
+ephone  1
+ mac-address 001D.9251.84F2
+ type CIPC
+ button  1:1
+!
+dial-peer voice 300 voip
+ destination-pattern 3..
+ session protocol sipv2
+ session target sip-server
+ session transport udp
+ codec g711ulaw
+!
+sip-ua
+ authentication username cisco password cisco
+ sip-server ipv4:192.168.15.6
+!
