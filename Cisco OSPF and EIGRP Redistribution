@@ -1,1 +1,44 @@
 https://networklessons.com/cisco/ccie-enterprise-infrastructure/redistribution-between-eigrp-and-ospf
+
+R1(config)#router eigrp 12
+R1(config-router)#no auto-summary 
+R1(config-router)#network 1.1.1.1 0.0.0.0
+R1(config-router)#network 192.168.12.0  
+
+R2(config)#router eigrp 12
+R2(config-router)#no auto-summary 
+R2(config-router)#network 192.168.12.0
+
+R2(config)#router ospf 1
+R2(config-router)#network 192.168.23.0 0.0.0.255 area 0
+
+R3(config)#router ospf 1
+R3(config-router)#network 192.168.23.0 0.0.0.255 area 0
+R3(config-router)#network 3.3.3.3 0.0.0.0 area 0
+
+Redistribute OSPF into EIGRP
+First, we’ll redistribute OSPF into EIGRP. We do this under the EIGRP process:
+
+R2(config)#router eigrp 12
+Let’s take a look at the redistribute ospf options:
+
+R2(config-router)#redistribute ospf ?
+  <1-65535>  Process ID
+We need to select the correct OSPF process. In our example, that’s process ID 1. There are three options you can choose from:
+
+R2(config-router)#redistribute ospf 1 ?
+  match      Redistribution of OSPF routes
+  metric     Metric for redistributed routes
+  route-map  Route map reference
+
+We’ll keep it simple for now and just redistribute all OSPF routes into EIGRP. We have to specify a metric, if we don’t, redistribution fails. !!!!!!!!!!!!!!
+
+R2(config-router)#redistribute ospf 1 metric 1 1 1 1 1
+
+Redistribute EIGRP into OSPF
+We are halfway there. We still need to redistribute EIGRP into OSPF. Let’s go to the OSPF process:
+
+R2(config)#router ospf 1
+And take a look at the redistribute eigrp options. Make sure you select the correct EIGRP AS number (12 in our example):
+
+R2(config-router)#redistribute eigrp 12 
