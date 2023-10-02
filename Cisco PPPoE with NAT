@@ -60,3 +60,32 @@ int fa0/0
 
 int fa0/1
  description ISP Side
+
+
+
+#Real config from ****
+
+interface FastEthernet0/1
+ description ISP_PRIMARY
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ pppoe enable group global
+ pppoe-client dial-pool-number 1
+!
+interface Dialer1
+ ip vrf forwarding Internet_1
+ ip address negotiated
+ no ip redirects
+ no ip unreachables
+ no ip proxy-arp
+ ip mtu 1492
+ ip virtual-reassembly in
+ encapsulation ppp
+ dialer pool 1
+ ppp authentication chap pap callin
+ ppp chap hostname Rt
+ ppp chap password 7 053912
+ ppp pap sent-username Rt password 7 04691F
+
