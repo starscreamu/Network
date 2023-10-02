@@ -1,0 +1,12 @@
+cisco(config)# ip domain name test.dom
+cisco(config)# crypto key generate rsa
+cisco(config)# service password-encryption
+cisco(config)# username user privilege 15 password 7 Pa$$w0rd
+cisco(config)# aaa new-model
+cisco(config)# line vty 0 4
+cisco(config-line)# transport input ssh
+cisco(config-line)# logging synchronous
+cisco(config-line)# exec-timeout 60 0
+cisco(config-line)# exit
+cisco(config)# exit
+cisco# copy running-config startup-config
