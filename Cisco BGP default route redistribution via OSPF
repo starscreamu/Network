@@ -9,3 +9,5 @@ neighbor 203.150.100.13 remote-as 64500 # To ISP which will give you default rou
 router ospf 1
 redistribute bgp 64509 subnets
 default-information originate metric-type 1
+
+In order to get a default route via OSPF through BGP session with ISP to your network
