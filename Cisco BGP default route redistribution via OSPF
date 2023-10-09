@@ -1,0 +1,11 @@
+no ip route 0.0.0.0 0.0.0.0
+
+router ospf 1 
+no default-information originate always metric-type 1
+
+router bgp 64509
+neighbor 203.150.100.13 remote-as 64500 # To ISP which will give you default route
+
+router ospf 1
+redistribute bgp 64509 subnets
+default-information originate metric-type 1
