@@ -1,3 +1,6 @@
+https://www.youtube.com/watch?v=Vl21CIPME3M&ab_channel=Networkisreachable #GRE over IPSec
+
+
 Настройка Gre туннеля на 1 роутере
 int tunnel 1
 ip address 5.5.5.1 255.255.255.252
