@@ -35,4 +35,11 @@ match address VPN-HOSTS
 interface g0/0/1 #out int 
 crypto map VPN
 
-done
+
+#Tunnel creation
+int tunnel 1
+tunnel source g0/0/1 #out int
+tunnel destination 213.150.100.2
+ip addr  10.1.1.1 255.255.255.252
+
+done!
