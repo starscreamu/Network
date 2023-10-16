@@ -15,7 +15,8 @@ crypto map OUR-MAP
 GUIDE IS NOT FULL!!!!
 
 #phase1
-crypto isakmp policy 10
+crypto isakmp enable
+crypto isakmp policy 10 #More value = more secure
 hash md5
 encryption aes 
 authentication pre-share
