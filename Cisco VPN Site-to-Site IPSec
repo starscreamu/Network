@@ -1,6 +1,7 @@
 https://www.youtube.com/watch?v=FS8i8nK3xAY&list=WL&index=2&ab_channel=TechnicalRepresentators4U
 https://www.youtube.com/watch?v=6XqPcfq7rcM&ab_channel=PMNetworking
 https://www.youtube.com/watch?v=vqZDev9n3hA&ab_channel=TechNetGuide
+https://www.youtube.com/watch?v=Z7LwU6H5IGE&ab_channel=danscourses
 
 #phase2 is user traffic/IPSec SA
 #crypto-map is a combination of settings for IPSec tunnels
@@ -28,9 +29,10 @@ crypto isakmp key cisco address "out int of the 2nd site"
 crypto ipsec transform-set CCNP esp-aes 128 esp-md5-hmac
 
 #ACL
-access-list VPN-HOSTS permit host 192.168.1.10 host 192.168.2.10
+access-list extended VPN-HOSTS permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
 crypto map VPN 10 ipsec-isakmp
 set peer 213.150.100.2 
+set pfs group 2
 set transform-set CCNP 
 match address VPN-HOSTS
 interface g0/0/1 #out int 
