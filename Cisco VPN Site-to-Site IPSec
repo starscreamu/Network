@@ -47,7 +47,7 @@ crypto ipsec transform-set VPN esp-aes 128 esp-md5-hmac
 access-list extended VPN-HOSTS permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
 crypto map IPSEC-MAP 10 ipsec-isakmp
 set peer 213.150.100.2 
-set pfs group 2
+set pfs group2
 set transform-set VPN 
 match address VPN-HOSTS
 interface g0/0/1 #out int 
