@@ -41,17 +41,17 @@ group-2
 
 #phase2
 crypto isakmp key cisco address "out int of the 2nd site"
-crypto ipsec transform-set CCNP esp-aes 128 esp-md5-hmac
+crypto ipsec transform-set VPN esp-aes 128 esp-md5-hmac
 
 #ACL
 access-list extended VPN-HOSTS permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
-crypto map VPN 10 ipsec-isakmp
+crypto map IPSEC-MAP 10 ipsec-isakmp
 set peer 213.150.100.2 
 set pfs group 2
-set transform-set CCNP 
+set transform-set VPN 
 match address VPN-HOSTS
 interface g0/0/1 #out int 
-crypto map VPN
+crypto map IPSEC-MAP
 
 
 #Tunnel creation
