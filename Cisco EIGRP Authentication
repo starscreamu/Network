@@ -1,0 +1,20 @@
+R1
+key-chain EIGRPKEY
+key 5 #Number doesn't matter as long it's the same on both R's
+key-string CISCO
+int g0/0
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 EIGRPKEY
+
+show key chain
+show ip eigrp interface detail
+
+R2
+key chain EIGRPKEY
+key 2
+key-string CISCO
+router eigrp NAMED 
+address-family ipv4 unicast auto 100
+af-interface default
+authentication mode md5
+authentication key-chain EIGRPKEY
