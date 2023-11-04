@@ -1,0 +1,49 @@
+esr(config)# username <name>
+esr(config-user)# password <password>
+esr(config-user)# privilege <privilege>  #Set to 15 for admin
+esr(config-user)# exit
+
+#Example
+esr# configure
+esr(config)# username fedor
+esr(config-user)# password 12345678
+esr(config-user)# privilege 15
+esr(config-user)# exit
+esr(config)# username ivan
+esr(config-user)# password password
+esr(config-user)# privilege 1
+esr(config-user)# exit
+
+#SSH and TELNET for untrusted
+esr# configure
+esr(config)# security zone-pair <source-zone> self
+esr(config-zone-pair)# rule <number>
+esr(config-zone-rule)# action permit
+esr(config-zone-rule)# match protocol tcp
+esr(config-zone-rule)# match source-address <network object-group>
+esr(config-zone-rule)# match destination-address <network object-group>
+esr(config-zone-rule)# match destination-port <service object-group>
+esr(config-zone-rule)# enable
+esr(config-zone-rule)# exit
+esr(config-zone-pair)# exit
+
+esr# configure
+esr(config)# object-group network clients
+esr(config-addr-set)# ip address-range 132.16.0.5-132.16.0.10
+esr(config-addr-set)# exit
+esr(config)# object-group network gateway
+esr(config-addr-set)# ip address-range 40.13.1.22
+esr(config-addr-set)# exit
+esr(config)# object-group service ssh
+esr(config-port-set)# port-range 22
+esr(config-port-set)# exit
+esr(config)# security zone-pair untrusted self
+esr(config-zone-pair)# rule 10
+esr(config-zone-rule)# action permit
+esr(config-zone-rule)# match protocol tcp
+esr(config-zone-rule)# match source-address clients
+esr(config-zone-rule)# match destination-address gateway
+esr(config-zone-rule)# match destination-port ssh
+esr(config-zone-rule)# enable
+esr(config-zone-rule)# exit
+esr(config-zone-pair)# exit
