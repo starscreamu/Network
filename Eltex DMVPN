@@ -1,0 +1,164 @@
+https://docs.eltex-co.ru/esr1130/upravlenie-tunnelirovaniem-136675569.html
+
+Конфигурирование Hub
+Создадим туннель GRE:
+
+esr# configure
+esr(config)# tunnel gre 5
+Укажем IP-адрес интерфейса, граничащего с ISP:
+
+esr(config-gre)# local address 150.115.0.5
+Зададим значение MTU:
+
+esr(config-gre)# mtu 1416
+Установим значение ttl:
+
+esr(config-gre)# ttl 16
+Зададим IP-адрес GRE-туннеля:
+
+esr(config-gre)# ip address 10.10.0.5/24
+Переведём GRE-туннель в mutipoint режим для возможности соединения с несколькими точками:
+
+esr(config-gre)# multipoint
+Перейдём к настройке NHRP. Настроим отправку мультикастовых рассылок в динамически узнаваемые адреса:
+
+esr(config-gre)# ip nhrp multicast dynamic
+Произведём настройку протокола динамической маршрутизации для Hub. В нашем примере это будет BGP:
+
+esr(config)# router bgp 65005
+esr(config-bgp)# address-family ipv4
+esr(config-bgp-af)# neighbor 10.10.0.8
+esr(config-bgp-neighbor)# remote-as 65008
+esr(config-bgp-neighbor)# enable
+esr(config-bgp-neighbor)# exit
+esr(config-bgp-af)# neighbor 10.10.0.4
+esr(config-bgp-neighbor)# remote-as 65004
+esr(config-bgp-neighbor)# enable
+esr(config-bgp-neighbor)# exit
+esr(config-bgp-af)# enable
+Произведём настройку IPsec для Hub:
+
+esr(config)# security ike proposal IKEPROP
+esr(config-ike-proposal)# encryption algorithm aes128
+esr(config-ike-proposal)# dh-group 2
+esr(config-ike-proposal)# exit
+esr(config)# security ike policy IKEPOLICY
+esr(config-ike-policy)# pre-shared-key ascii-text encrypted 8CB5107EA7005AFF
+esr(config-ike-policy)# proposal IKEPROP
+esr(config-ike-policy)# exit
+esr(config)# security ike gateway IKEGW
+esr(config-ike-gw)# ike-policy IKEPOLICY
+esr(config-ike-gw)# local address 150.115.0.5
+esr(config-ike-gw)# local network 150.115.0.5/32 protocol gre
+esr(config-ike-gw)# remote address any
+esr(config-ike-gw)# remote network any
+esr(config-ike-gw)# mode policy-based
+esr(config-ike-gw)# exit
+esr(config)# security ipsec proposal IPSECPROP
+esr(config-ipsec-proposal)# encryption algorithm aes128
+esr(config-ipsec-proposal)# exit
+esr(config)# security ipsec policy IPSECPOLICY
+esr(config-ipsec-policy)# proposal IPSECPROP
+esr(config-ipsec-policy)# exit
+esr(config)# security ipsec vpn IPSECVPN
+esr(config-ipsec-vpn)# mode ike
+esr(config-ipsec-vpn)# ike establish-tunnel route
+esr(config-ipsec-vpn)# ike gateway IKEGW
+esr(config-ipsec-vpn)# ike ipsec-policy IPSECPOLICY
+esr(config-ipsec-vpn)# enable
+Привяжем IPsec к GRE-туннелю, чтобы клиенты могли устанавливать шифрованное соединение:
+
+esr(config-gre)# ip nhrp ipsec IPSECVPN dynamic
+Включим работу NHRP и сам туннель:
+
+esr(config-gre)# ip nhrp enable
+esr(config-gre)# enable
+Конфигурирование Spoke
+Проведём стандартную настройку DMVPN на туннеле:
+
+esr# configure
+esr(config-gre)# tunnel gre 8
+esr(config-gre)# mtu 1416
+esr(config-gre)# ttl 16
+esr(config-gre)# multipoint
+esr(config-gre)# local address 180.100.0.10
+esr(config-gre)# ip address 10.10.0.8/24
+Указываем сколько времени будет храниться запись о клиенте на сервере:
+
+esr(config-gre)# ip nhrp holding-time 300
+Указываем туннельный адрес NHS:
+
+esr(config-gre)# ip nhrp nhs 10.10.0.5/24
+Зададим соответствие туннельному адресу – реальный:
+
+esr(config-gre)# ip nhrp map 10.10.0.5 150.115.0.5
+Настроим мультикастовую рассылку на NHRP сервер:
+
+esr(config)# ip nhrp multicast nhs
+Произведём настройку BGP для spoke:
+
+esr(config)# router bgp 65008
+esr(config-bgp)# address-family ipv4
+esr(config-bgp-af)# neighbor 10.10.0.5
+esr(config-bgp-neighbor)# remote-as 65005
+esr(config-bgp-neighbor)# enable
+esr(config-bgp-neighbor)# exit
+esr(config-bgp-af)# enable
+Произведём настройку IPsec. При создании шлюза протокола IKE для NHS, укажем конкретные адреса назначения. A при создании шлюза IKE для NHC – адрес назначения будет any:
+
+esr(config)# security ike proposal IKEPROP
+esr(config-ike-proposal)# encryption algorithm aes128
+esr(config-ike-proposal)# dh-group 2
+esr(config-ike-proposal)# exit
+esr(config)# security ike policy IKEPOLICY
+esr(config-ike-policy)# pre-shared-key ascii-text encrypted 8CB5107EA7005AFF
+esr(config-ike-policy)# proposal IKEPROP
+esr(config-ike-policy)# exit
+esr(config)# security ike gateway IKEGW_HUB
+esr(config-ike-gw)# ike-policy IKEPOLICY
+esr(config-ike-gw)# local address 180.100.0.10
+esr(config-ike-gw)# local network 180.100.0.10/32 protocol gre
+esr(config-ike-gw)# remote address 150.115.0.5
+esr(config-ike-gw)# remote network 150.115.0.5/32 protocol gre
+esr(config-ike-gw)# mode policy-based
+esr(config-ike-gw)# exit
+esr(config)# security ike gateway IKEGW_SPOKE
+esr(config-ike-gw)# ike-policy IKEPOLICY
+esr(config-ike-gw)# local address 180.100.0.10
+esr(config-ike-gw)# local network 180.100.0.10/32 protocol gre
+esr(config-ike-gw)# remote address any
+esr(config-ike-gw)# remote network any
+esr(config-ike-gw)# mode policy-based
+esr(config-ike-gw)# exit
+esr(config)# security ipsec proposal IPSECPROP
+esr(config-ipsec-proposal)# encryption algorithm aes128
+esr(config-ipsec-proposal)# exit
+esr(config)# security ipsec policy IPSECPOLICY
+esr(config-ipsec-policy)# proposal IPSECPROP
+esr(config-ipsec-policy)# exit
+esr(config)# security ipsec vpn IPSECVPN_HUB
+esr(config-ipsec-vpn)# mode ike
+esr(config-ipsec-vpn)# ike establish-tunnel route
+esr(config-ipsec-vpn)# ike gateway IKEGW_HUB
+esr(config-ipsec-vpn)# ike ipsec-policy IPSECPOLICY
+esr(config-ipsec-vpn)# enable
+esr(config)# security ipsec vpn IPSECVPN_SPOKE
+esr(config-ipsec-vpn)# mode ike
+esr(config-ipsec-vpn)# ike establish-tunnel route
+esr(config-ipsec-vpn)# ike gateway IKEGW_SPOKE
+esr(config-ipsec-vpn)# ike ipsec-policy IPSECPOLICY
+esr(config-ipsec-vpn)# enable
+Привяжем IPsec к GRE-туннелю, для возможности установления шифрованного соединения с сервером и с другими клиентами сети:
+
+esr(config-gre)# ip nhrp ipsec IPSECVPN_HUB static
+esr(config-gre)# ip nhrp ipsec IPSECVPN_SPOKE dynamic
+Включим работу NHRP и сам туннель:
+
+esr(config-gre)# ip nhrp enable
+esr(config-gre)# enable
+Состояние NHRP-записей можно посмотреть командой:
+
+esr# show ip nhrp
+Очистить NHRP-записи можно командой:
+
+esr# clear ip nhrp
