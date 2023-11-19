@@ -1,0 +1,11 @@
+Firewall - Aliases - Add 
+Name - blocked_sites
+Type (Hosts)
+IP or FQDN - www.youtube.com
+Done
+
+#Next
+Rules - LAN - Add 
+Action - Block
+Interface - LAN
+Destination - Address or alias - blocked_sites
