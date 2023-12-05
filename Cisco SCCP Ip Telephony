@@ -1,0 +1,52 @@
+#### On SWITCH
+
+interface GigabitEthernet1/0/24
+ switchport mode access
+ switchport voice vlan 30
+ spanning-tree portfast edge
+
+
+
+### On ROUTER
+
+ip dhcp pool VOICE 
+ network 10.30.1.0 255.255.255.0
+ default-router 10.30.1.1
+ option 150 ip 10.30.1.1
+!
+!
+!
+
+
+telephony-service
+ max-ephones 10
+ max-dn 10
+ ip source-address 10.30.1.1 port 2000
+ max-conferences 8 gain -6
+ transfer-system full-consult
+!
+!
+!
+!
+ephone-dn  1
+ number 2000
+ label PUTIN
+ description PUTIN
+ name PUTIN
+ preference 1
+!
+!
+ephone  1
+ mac-address 001E.4AF1.22AF
+ type 7942
+ auto-line incoming
+ button  1:1
+!
+!
+!
+
+### To transfer calls to another site
+dial-peer voice 1 voip
+destination-pattern .0  ###########Если я наберу 1000, вызов будет перенаправлен на эту настроенную адресуемую точку вызова. Если я наберу номер 2000, он также будет перенаправлен на эту адресуемую точку вызова (в частности, эта адресуемая точка вызова влияет на номера 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000 и 9000).
+                                    Но если я наберу что-то вроде «1001», вызов не будет перенаправлен, потому что на нашем маршрутизаторе не настроен шаблон назначения.
+ session target ipv4:10.0.0.1
