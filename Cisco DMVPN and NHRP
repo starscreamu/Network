@@ -5,3 +5,43 @@ http://xgu.ru/wiki/%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0_DMVPN_
 show ip nhrp 
 show dmvpn 
 #############################################
+
+
+
+
+
+
+
+
+
+
+
+###Real conf
+interface Tunnel701
+ description DMVPN_PRIMARY_5000
+ bandwidth 5000
+ ip address 172.17.224.7 255.255.254.0
+ no ip redirects
+ ip mtu 1400
+ ip flow ingress
+ ip flow egress
+ ip nhrp authentication Tun701
+ ip nhrp map 172.17.225.253 195.43.91.20
+ ip nhrp map multicast 195.43.91.20
+ ip nhrp map 172.17.225.252 195.43.90.20
+ ip nhrp map multicast 195.43.90.20
+ ip nhrp network-id 100701
+ ip nhrp holdtime 300
+ ip nhrp nhs 172.17.225.252 priority 1
+ ip nhrp nhs 172.17.225.253 priority 10
+ ip nhrp nhs cluster 0 max-connections 1
+ ip nhrp nhs fallback 10
+ ip tcp adjust-mss 1360
+ load-interval 30
+ delay 1000
+ qos pre-classify
+ tunnel source Dialer1
+ tunnel mode gre multipoint
+ tunnel key 100701
+ tunnel vrf Internet_1
+ tunnel protection ipsec profile PRIMARY_NHS
