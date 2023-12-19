@@ -1,2 +1,5 @@
+https://wiki.merionet.ru/articles/port-forwarding-teoriya-i-nastrojka-cisco
+
+
 ip nat inside source static tcp 192.168.100.100 22 4.4.4.100 2222 #This means that traffic from 4.4.4.100 on port 2222 will be translated to 192.168.100.100 on port 22
 ip nat inside source static tcp 172.16.100.100 22 5.5.5.100 2244 #This means that traffic from 5.5.5.100 on port 2244 will be translated to 172.16.100.100 on port 22
