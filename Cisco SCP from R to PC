@@ -1,0 +1,25 @@
+https://ip-life.net/transferring-files-via-scp-on-cisco-routers/
+
+
+###on R###
+
+ip domain-name <some.domain>
+hostname <routername>
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+username <someuser> privilege 15 secret <somepassword>
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local
+
+To enable the scp server, you need to use the following command in IOS:
+
+ip scp server enable
+
+###From R to PC###
+scp username@5.5.5.5:flash:/somefile . ### Current DIR
+
+
+###To upload a file to the router###
+
+scp c880data-universalk9-mz.157-3.M4a.bin username@5.5.5.5:flash:/c880data-universalk9-mz.157-3.M4a.bin
