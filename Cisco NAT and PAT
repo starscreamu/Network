@@ -57,3 +57,4 @@ Ciscozine(config)#ip nat source static 172.16.0.6 10.16.0.5
 
 ################# VRF Related Cisco Document ########################
 https://community.cisco.com/legacyfs/online/legacy/0/8/0/60080-NAT%20Virtual%20Interface.pdf
+https://www.youtube.com/watch?v=r2Zs3lr9Ps0&t=372s&ab_channel=TravisBonfigli
