@@ -27,3 +27,27 @@ ip nat pool PUBLICIPS 155.4.12.1 155.4.12.3 netmask 255.255.255.0
 ip nat inside source list NAT-SOURCES pool PUBLISIPS interface serial0/1/0 #can also use overload, basically people call it Dynamic PAT
 
 #NOTE if you forget to put overload - only the 1st PC to access the outside network will have a connection because it caches NAT translations
+
+
+###Update about NVI###
+https://www.ciscozine.com/nat-virtual-interface-aka-nvi-what-is-that/
+
+###For instance, if you use legacy statement###
+
+Ciscozine(config)#interface range fastEthernet 0/0
+Ciscozine(config-if-range)#ip nat inside
+
+Ciscozine(config)#interface range fastEthernet 0/1
+Ciscozine(config-if-range)#ip nat outside
+
+Ciscozine(config)#ip nat inside source static 172.16.0.6 10.16.0.5
+
+with NVI feature the nat will be:
+
+Ciscozine(config)#interface range fastEthernet 0/0
+Ciscozine(config-if-range)#ip nat enable
+
+Ciscozine(config)#interface range fastEthernet 0/1
+Ciscozine(config-if-range)#ip nat enable
+
+Ciscozine(config)#ip nat source static 172.16.0.6 10.16.0.5
