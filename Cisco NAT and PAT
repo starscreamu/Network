@@ -31,6 +31,7 @@ ip nat inside source list NAT-SOURCES pool PUBLISIPS interface serial0/1/0 #can 
 
 ###Update about NVI###
 https://www.ciscozine.com/nat-virtual-interface-aka-nvi-what-is-that/
+https://networklessons.com/cisco/ccie-routing-switching/nat-virtual-interface
 
 ###For instance, if you use legacy statement###
 
