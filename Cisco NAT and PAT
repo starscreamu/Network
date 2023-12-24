@@ -33,7 +33,7 @@ ip nat inside source list NAT-SOURCES pool PUBLISIPS interface serial0/1/0 #can 
 https://www.ciscozine.com/nat-virtual-interface-aka-nvi-what-is-that/
 https://networklessons.com/cisco/ccie-routing-switching/nat-virtual-interface
 https://blog.sliderweb.ru/blog/post/nvi-nat-cisco
-
+https://www.youtube.com/watch?v=eTPJl0O-m8o&ab_channel=%E9%B4%BB%E6%84%9C%E6%84%8F
 ###For instance, if you use legacy statement###
 
 Ciscozine(config)#interface range fastEthernet 0/0
