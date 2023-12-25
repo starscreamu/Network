@@ -1,0 +1,6 @@
+First of all, disable FIREWALL on interfaces, you can configure it later.
+Eltex disables all incoming traffic by default.
+
+int gigabitethernet g1/0/1
+ip firewall disable
+
