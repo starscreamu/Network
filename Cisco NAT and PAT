@@ -68,7 +68,9 @@ As we know, with a "normal" configuration my HTTP request fail, because my reque
 who knows that 10.10.10.154 is statically natted to 192.168.100.254, then he route our packet directly to 192.168.100.254 without go out from our LAN. 
 The web server see the HTTP request from 192.168.100.10 then reply directly to that IP. The 3-way Handshake fail because our PC expects a reply from 10.10.10.154 and not from 192.168.100.254.
 
- NVI
+http://www.labnfun.ru/2017/11/ccnp-route-full-scale-infrastructure.html
+
+NVI
 У всех предыдущих примеров настройки NATа есть один большой косяк. 
 Допустим, к роутеру подключен ещё и сервер, который находится в DMZ. 
 Для него настроен статический NAT. Проблема в том, что клиент из локальной сети до такого сервера не будет иметь доступ. 
