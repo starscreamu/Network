@@ -58,3 +58,12 @@ Ciscozine(config)#ip nat source static 172.16.0.6 10.16.0.5
 ################# VRF Related Cisco Document ########################
 https://community.cisco.com/legacyfs/online/legacy/0/8/0/60080-NAT%20Virtual%20Interface.pdf
 https://www.youtube.com/watch?v=r2Zs3lr9Ps0&t=372s&ab_channel=TravisBonfigli
+
+
+#### NAT Hairpin ### 
+https://community.cisco.com/t5/routing/nat-hairpinning/td-p/2475807
+
+With this scenario, I would to reach my webserver from my internal LAN, on public IP of the web server (in this case 10.10.10.154). 
+As we know, with a "normal" configuration my HTTP request fail, because my request to 10.10.10.154 from 192.168.100.10 goes toward the router,
+who knows that 10.10.10.154 is statically natted to 192.168.100.254, then he route our packet directly to 192.168.100.254 without go out from our LAN. 
+The web server see the HTTP request from 192.168.100.10 then reply directly to that IP. The 3-way Handshake fail because our PC expects a reply from 10.10.10.154 and not from 192.168.100.254.
