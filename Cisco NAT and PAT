@@ -67,3 +67,13 @@ With this scenario, I would to reach my webserver from my internal LAN, on publi
 As we know, with a "normal" configuration my HTTP request fail, because my request to 10.10.10.154 from 192.168.100.10 goes toward the router,
 who knows that 10.10.10.154 is statically natted to 192.168.100.254, then he route our packet directly to 192.168.100.254 without go out from our LAN. 
 The web server see the HTTP request from 192.168.100.10 then reply directly to that IP. The 3-way Handshake fail because our PC expects a reply from 10.10.10.154 and not from 192.168.100.254.
+
+ NVI
+У всех предыдущих примеров настройки NATа есть один большой косяк. 
+Допустим, к роутеру подключен ещё и сервер, который находится в DMZ. 
+Для него настроен статический NAT. Проблема в том, что клиент из локальной сети до такого сервера не будет иметь доступ. 
+Причина в том, как работает NAT в его классическом варианте. 
+Трафик от клиента попадет на роутер в inside интерфейс, смаршрутизируется на outside интерфtйс, там произойдет трансляция, после чего трафик уйдет на сервер. 
+Проблема в обратном трафике. Трафик от сервера попадет на интерфейс в который подключен сервер. 
+Тут должна произойти обратная последовательность NAT и затем routing. Но обратный трафик не попадет на outside интерфейс, весь сервер подключен к inside. 
+А значит обратная трансляция не произойдет. Таким образом, трафик не будет натится и обратный трафик не дойдет до пользователя.
