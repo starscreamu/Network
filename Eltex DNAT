@@ -1,0 +1,74 @@
+https://adminwin.ru/nastroyka-nat-na-eltex-destination-nat/?ysclid=ls4q2iecnz44164324
+
+
+Организовать доступ из сети Internet, относящейся к зоне «UNTRUST», к серверу локальной сети в зоне «TRUST». Адрес сервера в локальной сети — 192.168.1.100. Сервер должен быть доступным извне по адресу 1.1.1.1 и порт 21 (FTP).
+
+1.Настройку начнем с создания зон TRUST и UNTRUST, который обозначают LAN и WAN сегмент соответственно.
+
+esr# configure
+esr(config)# security zone UNTRUST
+esr(config-zone)# exit
+esr(config)# security zone TRUST
+esr(config-zone)# exit
+2. На интерфейсы навесим зоны и ip-адреса.
+
+esr(config)# interface gigabitethernet 1/0/1
+esr(config-if-gi)# security-zone TRUST
+esr(config-if-gi)# ip address 192.168.1.1/24
+esr(config-if-gi)# exit
+esr(config)# interface tengigabitethernet 1/0/2
+esr(config-if-te)# ip address 1.1.1.1/29
+esr(config-if-te)# security-zone UNTRUST
+esr(config-if-te)# exit
+3. Далее создадим профили IP-адресов и портов, которые потребуются для настройки правил Firewall и правил DNAT.
+– WAN_IP – профиль адреса публичной сети;
+– SERVER_IP – профиль адресов локальной сети;
+– FTP_PORT – профиль портов.
+
+esr(config)# object-group network WAN_IP
+esr(config-object-group-network)# ip address 1.1.1.1
+esr(config-object-group-network)# exit
+
+esr(config)# object-group network SERVER_IP
+esr(config-object-group-network)# ip address 192.168.1.100
+esr(config-object-group-network)# exit
+
+esr(config)# object-group service FTP_PORT 
+esr(config-object-group-service)# port 21
+esr(config-object-group-service)# exit
+4. В конфигурации DNAT создадим пул адресов и портов
+назначения, в которые будут отправляться пакеты, поступающие на адрес 1.1.1.1 из внешней сети.
+
+esr(config)# nat destination
+esr(config-dnat)# pool SERVER_POOL
+esr(config-dnat-pool)# ip address 192.168.1.100
+esr(config-dnat-pool)# ip port 21
+esr(config-dnat-pool)# exit
+5. Создадим набор правил «DNAT», в соответствии с которыми будет производиться трансляция адресов. В атрибутах укажем, что правила применяются только для пакетов, пришедших из зоны «UNTRUST». Набор правил включает в себя требования соответствия данных по адресу и порту
+назначения (match destination-address, match destination-port) и по протоколу (match protocol). Кроме этого в наборе задано действие, применяемое к данным, удовлетворяющим всем правилам (action destination-nat).
+Активация набора правил происходит командой «enable».
+
+esr(config-dnat)# ruleset DNAT
+esr(config-dnat-ruleset)# from zone UNTRUST
+esr(config-dnat-ruleset)# rule 1
+esr(config-dnat-rule)# match destination-address WAN_IP
+esr(config-dnat-rule)# match protocol tcp
+esr(config-dnat-rule)# match destination-port FTP_PORT
+esr(config-dnat-rule)# action destination-nat pool SERVER_POOL
+esr(config-dnat-rule)# enable
+esr(config-dnat-rule)# exit
+esr(config-dnat-ruleset)# exit
+esr(config-dnat)# exit
+6. Для пропуска трафика, идущего из зоны «UNTRUST» в «TRUST», создадим соответствующую пару зон. Пропускать следует только трафик с адресом назначения, соответствующим заданному в
+профиле «SERVER_IP» и прошедший преобразование DNAT.
+Активация набора правил происходит командой «enable».
+
+esr(config)# security zone-pair UNTRUST TRUST
+esr(config-zone-pair)# rule 1
+esr(config-zone-pair-rule)# match destination-address SERVER_IP
+esr(config-zone-pair-rule)# match destination-nat
+esr(config-zone-pair-rule)# action permit
+esr(config-zone-pair-rule)# enable
+esr(config-zone-pair-rule)# exit
+esr(config-zone-pair)# exit
+esr(config)# exit
