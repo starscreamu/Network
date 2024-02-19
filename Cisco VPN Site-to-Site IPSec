@@ -4,7 +4,12 @@ https://www.youtube.com/watch?v=vqZDev9n3hA&ab_channel=TechNetGuide
 https://www.youtube.com/watch?v=Z7LwU6H5IGE&ab_channel=danscourses
 https://www.firewall.cx/cisco/cisco-routers/cisco-router-site-to-site-ipsec-vpn.html #WITH NAT TRAVERSE
 
+#########################Theory############################
+https://linkmeup.gitbook.io/sdsm/7.-vpn/2.-ipsec/0.-teoriya
+###########################################################
+
 ATTENTION!!! IF YOU WANT HOSTS CONNECTIVITY WITH NAT TRAVERSE YOU NEED TO SET AN EXTENDED ACL!!!
+
 
 R1(config)# ip nat inside source list 100 interface fastethernet0/1 overload
 R1(config)# access-list 100 remark -=[Define NAT Service]=-
@@ -18,18 +23,12 @@ R2(config)# access-list 100 deny ip 20.20.20.0 0.0.0.255 10.10.10.0  0.0.0.255
 R2(config)# access-list 100 permit ip 20.20.20.0 0.0.0.255 any
 R2(config)# access-list 100 remark
 
-#phase2 is user traffic/IPSec SA
-#crypto-map is a combination of settings for IPSec tunnels
-
+#############SHOW CMDs################
 show crypto isakmp sa #1st tunnel data
 show crypto ipsec sa #2nd tunnel data
 show crypto engine connections active
 show crypto map
 
-int g0/0
-crypto map OUR-MAP
-
-GUIDE IS NOT FULL!!!!
 
 #phase1
 crypto isakmp enable
@@ -45,6 +44,7 @@ crypto ipsec transform-set VPN esp-aes 128 esp-md5-hmac
 
 #ACL
 access-list extended VPN-HOSTS permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
+
 crypto map IPSEC-MAP 10 ipsec-isakmp
 set peer 213.150.100.2 
 set pfs group2
