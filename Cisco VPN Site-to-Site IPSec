@@ -61,3 +61,181 @@ tunnel destination 213.150.100.2
 ip addr  10.1.1.1 255.255.255.252
 
 done!
+
+###################################################################################################
+
+R1
+
+hostname R1
+
+!
+
+crypto isakmp policy 1
+
+authentication pre-share
+
+crypto isakmp key cisco address 200.0.0.1
+
+!        
+
+!
+
+crypto ipsec transform-set T1 esp-aes esp-sha-hmac
+
+mode transport
+
+!
+
+crypto map MAP1 10 ipsec-isakmp
+
+set peer 200.0.0.1
+
+set transform-set T1
+
+match address 101
+
+!
+
+!
+
+!
+
+!
+
+interface Loopback0
+
+ip address 10.0.0.0 255.255.255.255
+
+!
+
+interface Tunnel0
+
+ip address 10.2.2.1 255.255.255.252
+
+tunnel source 100.0.0.1
+
+tunnel destination 200.0.0.1
+
+!      
+
+interface FastEthernet0/0
+
+ip address 100.0.0.1 255.255.255.252
+
+crypto map MAP1
+
+duplex auto
+
+speed auto
+
+!
+
+ip route 0.0.0.0 0.0.0.0 100.0.0.2
+
+ip route 10.1.1.0 255.255.255.255 10.2.2.2
+
+!
+
+access-list 101 permit gre host 100.0.0.1 host 200.0.0.1
+
+!
+
+R2
+
+hostname R2
+
+!
+
+interface FastEthernet0/0
+
+ip address 100.0.0.2 255.255.255.252
+
+duplex auto
+
+speed auto
+
+!
+
+interface FastEthernet0/1
+
+ip address 200.0.0.2 255.255.255.252
+
+duplex auto
+
+speed auto
+
+R3
+
+hostname R3
+
+!
+
+crypto isakmp policy 1
+
+authentication pre-share
+
+crypto isakmp key cisco address 100.0.0.1
+
+!        
+
+!
+
+crypto ipsec transform-set T1 esp-aes esp-sha-hmac
+
+mode transport
+
+!
+
+crypto map MAP1 10 ipsec-isakmp
+
+set peer 100.0.0.1
+
+set transform-set T1
+
+match address 101
+
+!
+
+!
+
+!
+
+!
+
+interface Loopback0
+
+ip address 10.1.1.0 255.255.255.255
+
+!
+
+interface Tunnel0
+
+ip address 10.2.2.2 255.255.255.252
+
+tunnel source 200.0.0.1
+
+tunnel destination 100.0.0.1
+
+!
+
+interface FastEthernet0/1
+
+ip address 200.0.0.1 255.255.255.0
+
+crypto map MAP1
+
+duplex auto
+
+speed auto
+
+!
+
+!
+
+ip route 0.0.0.0 0.0.0.0 200.0.0.2
+
+ip route 10.0.0.0 255.255.255.255 10.2.2.1
+
+access-list 101 permit gre host 200.0.0.1 host 100.0.0.1
+
+
