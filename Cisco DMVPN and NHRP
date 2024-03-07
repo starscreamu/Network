@@ -20,7 +20,9 @@ DMVPN Phase 3: Improves scalability of Phase 2. We can use any Routing Protocol 
 
 
 
+Phase 2 
 
+no ip next-hop-self ###On NHS
 
 
 
