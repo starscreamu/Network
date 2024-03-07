@@ -8,7 +8,15 @@ show dmvpn
 
 
 
+###########################################################################
+DMVPN Phase 1: All traffic flows through the hub. The hub is used in the network’s control and data plane paths.
 
+DMVPN Phase 2: Allows spoke-to-spoke tunnels. Spoke-to-spoke communication does not need the hub in the actual data plane. 
+Spoke-to-spoke tunnels are on-demand based on spoke traffic triggering the tunnel. Routing protocol design limitations exist.
+The hub is used for the control plane but, unlike phase 1, not necessarily in the data plane.
+
+DMVPN Phase 3: Improves scalability of Phase 2. We can use any Routing Protocol with any setup. “NHRP redirects” and “shortcuts” take care of traffic flows. 
+###########################################################################
 
 
 
