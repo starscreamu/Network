@@ -1,0 +1,10 @@
+https://linkmeup.gitbook.io/sdsm/8.-bgp-i-ip-sla/3.-pbr/1.-praktika
+http://xgu.ru/wiki/Cisco_PBR
+
+###Example###
+route-map PBR permit 10
+ match ip address VLAN_10
+ set ip next-hop 10.0.1.1
+route-map PBR permit 20
+ match ip address VLAN_20
+ set ip next-hop 10.0.2.2
