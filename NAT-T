@@ -1,0 +1,7 @@
+https://www.youtube.com/watch?v=sbL8f2GSq3w&ab_channel=NetworkDirection
+
+NAT’s useful, but can also cause us problems. For example, if an application embeds an IP address in the payload of a packet, it won’t be changed by NAT. Only the IP in the IP header will. This may cause the application to behave badly.
+
+IPSec is one of these applications. It will see this as packet tampering (a security threat) and drop the packet. NAT Traversal (NAT-T) is a way to work around this.
+
+NAT-T encapsulates the traffic in another layer of UDP. This way, NAT will change the outside layer, and not the inside headers. When the packet arrives, the NAT-T headers are removed, leaving the original header, with the IP addresses intact.
