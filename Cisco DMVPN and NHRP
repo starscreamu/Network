@@ -6,6 +6,28 @@ https://www.youtube.com/watch?v=f-_U3xdUj4A&ab_channel=NetworkDirection
 
 https://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/29240-dcmvpn.html #####IPSEC#####
 
+!--- Create an Internet Security Association and Key Management !--- Protocol (ISAKMP) policy for Phase 1 negotiations.
+
+!
+crypto isakmp policy 10
+hash md5
+authentication pre-share
+
+!--- Add dynamic pre-shared keys for all the remote VPN !--- routers.
+
+crypto isakmp key cisco123 address 0.0.0.0 0.0.0.0
+!
+
+!--- Create the Phase 2 policy for actual data encryption.
+
+crypto ipsec transform-set strong esp-3des esp-md5-hmac 
+!
+
+!--- Create an IPSec profile to be applied dynamically to the !--- GRE over IPSec tunnels.
+
+crypto ipsec profile cisco
+set security-association lifetime seconds 120
+set transform-set strong 
 
 
 #############################################
