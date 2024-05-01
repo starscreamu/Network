@@ -20,14 +20,14 @@ crypto isakmp key cisco123 address 0.0.0.0 0.0.0.0
 
 !--- Create the Phase 2 policy for actual data encryption.
 
-crypto ipsec transform-set strong esp-3des esp-md5-hmac 
+crypto ipsec transform-set TRANSFORMSETNAME esp-3des esp-md5-hmac 
 !
 
 !--- Create an IPSec profile to be applied dynamically to the !--- GRE over IPSec tunnels.
 
 crypto ipsec profile cisco
 set security-association lifetime seconds 120
-set transform-set strong 
+set transform-set TRANSFORMSETNAME 
 
 
 #############################################
