@@ -3,12 +3,15 @@ http://xgu.ru/wiki/%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0_DMVPN_
 https://www.youtube.com/watch?v=68Raa0FWNkg&ab_channel=KevinWallaceTraining%2CLLC
 https://www.youtube.com/watch?v=f-_U3xdUj4A&ab_channel=NetworkDirection
 
+
+https://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/29240-dcmvpn.html #####IPSEC#####
+
+
+
 #############################################
 show ip nhrp 
 show dmvpn 
 #############################################
-
-
 
 ###########################################################################
 DMVPN Phase 1: All traffic flows through the hub. The hub is used in the network’s control and data plane paths.
