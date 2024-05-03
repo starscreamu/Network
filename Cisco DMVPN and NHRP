@@ -25,7 +25,7 @@ crypto ipsec transform-set TRANSFORMSETNAME esp-3des esp-md5-hmac
 
 !--- Create an IPSec profile to be applied dynamically to the !--- GRE over IPSec tunnels.
 
-crypto ipsec profile cisco
+crypto ipsec profile DMVPN
 set security-association lifetime seconds 120
 set transform-set TRANSFORMSETNAME 
 
