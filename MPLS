@@ -16,3 +16,7 @@ MPLS VPN позволяет избавиться от вот этих непри
 Explicit Null Label - 0  is when thew lable is removed on a PE router. Explicit NULL could be used in environments where you want to use MPLS QoS values that are different from IP DSCP/IP Precedence values.
 Implicit Null Label - 3  is when the lable is removed before the PE router on a P router. The implicit NULL should be used whenever possible, as the PHP reduces the amount of lookup required on the last hop of an LSP 
 (sometimes that could mean the difference between hardware and software lookup).
+
+
+###########Explicit Null Label###########
+By default, Cisco IOS routers advertise implicit NULL with LDP. To change this behavior, use the mpls ldp explicit-null global configuration command.
