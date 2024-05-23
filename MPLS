@@ -11,3 +11,7 @@ MPLS VPN позволяет избавиться от вот этих непри
 2) Настройка отдельных интерфейсов для каждого VRF на каждом узле.
 3) Настройка отдельных процессов IGP для каждого VRF на каждом узле.
 4) Необходимость поддержки таблицы маршрутизации для каждого VRF на каждом узле.
+
+
+Explicit Null Label - 0  is when thew lable is removed on a PE router
+Implicit Null Label - 3  is when the lable is removed before the PE router on a P router (You will lose TC field in a label on a PE router which signalizes about QoS markings)
