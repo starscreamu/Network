@@ -12,6 +12,7 @@ MPLS VPN позволяет избавиться от вот этих непри
 3) Настройка отдельных процессов IGP для каждого VRF на каждом узле.
 4) Необходимость поддержки таблицы маршрутизации для каждого VRF на каждом узле.
 
-
-Explicit Null Label - 0  is when thew lable is removed on a PE router
-Implicit Null Label - 3  is when the lable is removed before the PE router on a P router (You will lose TC field in a label on a PE router which signalizes about QoS markings)
+#######################https://blog.ipspace.net/kb/tag/MPLS/Implicit_Explicit_NULL.html##########################
+Explicit Null Label - 0  is when thew lable is removed on a PE router. Explicit NULL could be used in environments where you want to use MPLS QoS values that are different from IP DSCP/IP Precedence values.
+Implicit Null Label - 3  is when the lable is removed before the PE router on a P router. The implicit NULL should be used whenever possible, as the PHP reduces the amount of lookup required on the last hop of an LSP 
+(sometimes that could mean the difference between hardware and software lookup).
