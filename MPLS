@@ -3,3 +3,11 @@ https://linkmeup.gitbook.io/sdsm/12.-mpls-l2vpn/0.-vpn-types
 
 https://www.youtube.com/watch?v=hZyfM4UZDac&t=115s&ab_channel=linkmeup
 https://www.youtube.com/watch?v=9WUjfUVBbIA&t=2759s&ab_channel=KevinWallaceTraining%2CLLC
+
+MPLS L3VPN
+
+MPLS VPN позволяет избавиться от вот этих неприятных шагов:
+1) Настройка VRF на каждом узле между точками подключения
+2) Настройка отдельных интерфейсов для каждого VRF на каждом узле.
+3) Настройка отдельных процессов IGP для каждого VRF на каждом узле.
+4) Необходимость поддержки таблицы маршрутизации для каждого VRF на каждом узле.
