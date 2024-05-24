@@ -27,3 +27,21 @@ RD is a Route Distinguisher which marks the route for MP-BGP in 64-bit prefix. I
 Is not obliged to be the same on different PE's.
 
 RT is a Route Target. May be Import and Export. Located in BGP Extended Community. Helps to differentiate between routes which need to be passed to other VRF's.
+
+Linkmeup_R1:
+
+Linkmeup_R1(config)#ip vrf C3PO
+Linkmeup_R1(config-vrf)# rd 64500:100
+Linkmeup_R1(config-vrf)# route-target both 64500:100
+
+Linkmeup_R3:
+
+Linkmeup_R3(config)#ip vrf C3PO
+Linkmeup_R3(config-vrf)# rd 64500:100
+Linkmeup_R3(config-vrf)# route-target both 64500:100
+
+Это позволяет нам обособить все данные одного клиента от других и от сети самого провайдера.
+Здесь же указываем RD и RT. Поскольку задача у нас простая — связать все филиалы C3PO Electronic, то сделаем RD и RT совпадающими. 
+Причём RT на Import и RT на Export тоже будут одинаковыми. Поскольку это обычная практика, существует даже специальная директива — both — тогда создаются оба RT сразу одинаковыми.
+Он и используется в качестве административного поля.
+Выделенный номер выбирается произвольно, но отслеживается, чтобы не было совпадения с другим, уже использованным.
