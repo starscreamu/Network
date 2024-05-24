@@ -20,3 +20,10 @@ Implicit Null Label - 3  is when the lable is removed before the PE router on a 
 
 ###########Explicit Null Label###########
 By default, Cisco IOS routers advertise implicit NULL with LDP. To change this behavior, use the mpls ldp explicit-null global configuration command.
+
+
+##########RD and RT##############
+RD is a Route Distinguisher which marks the route for MP-BGP in 64-bit prefix. It is located in NLRI section of BGP Community. (VPNv4)
+Is not obliged to be the same on different PE's.
+
+RT is a Route Target. May be Import and Export. Located in BGP Extended Community. Helps to differentiate between routes which need to be passed to other VRF's.
