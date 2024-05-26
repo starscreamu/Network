@@ -23,7 +23,7 @@ By default, Cisco IOS routers advertise implicit NULL with LDP. To change this b
 
 
 ##########RD and RT##############
-RD is a Route Distinguisher which marks the route for MP-BGP in 64-bit prefix. It is located in NLRI section of BGP Community. (VPNv4)
+RD is a Route Distinguisher which marks the route for MP-BGP in 64-bit prefix. It is located in NLRI section of BGP. (VPNv4)
 Is not obliged to be the same on different PE's.
 
 RT is a Route Target. May be Import and Export. Located in BGP Extended Community. Helps to differentiate between routes which need to be passed to other VRF's.
