@@ -1,0 +1,260 @@
+https://packetlife.net/blog/2011/may/19/mpls-vpn-common-services/\
+
+
+MPLS L3VPN. Доступ в Интернет. Common Services
+
+Internet
+
+hostname Internet
+
+!
+
+ip cef
+
+!
+
+interface Loopback0
+
+ ip address 101.0.0.101 255.255.255.255
+
+!
+
+interface FastEthernet0/0
+
+ description To linkmeup
+ ip address 101.0.0.1 255.255.255.252
+
+!
+
+router bgp 64501
+
+ network 101.0.0.0 mask 255.255.240.0
+ network 101.0.0.0 mask 255.255.248.0
+ neighbor 101.0.0.2 remote-as 64500
+
+!
+
+ip route 101.0.0.0 255.255.240.0 Null0
+
+Linkmeup_R1
+
+Linkmeup_R2
+
+hostname Linkmeup_R2
+
+!
+
+ip cef
+
+!
+
+mpls ip
+
+!
+
+interface Loopback0
+
+ ip address 2.2.2.2 255.255.255.255
+ ip router isis 1
+
+!
+
+interface FastEthernet0/0
+
+ description To Linkmeup_R1
+ ip address 10.0.12.2 255.255.255.0
+ ip router isis 1
+ mpls ip
+
+!
+
+interface FastEthernet0/1
+
+ description To Linkmeup_R3
+ ip address 10.0.23.2 255.255.255.0
+ ip router isis 1
+ mpls ip
+
+!
+
+router isis 1
+
+ net 10.0000.0000.0002.00
+
+!
+
+mpls ldp router-id Loopback0
+
+Linkmeup_R3
+
+hostname Linkmeup_R3
+
+!
+
+ip cef
+
+!
+
+mpls ip
+
+!
+
+ip vrf C3PO
+
+ rd 64500:100
+ route-target export 64500:100
+ route-target import 64500:100
+
+!
+
+ip vrf TARS
+
+ rd 64500:200
+ export map To_Internet
+ route-target export 64500:200
+ route-target import 64500:200
+ route-target import 64500:22
+
+!
+
+interface Loopback0
+
+ ip address 3.3.3.3 255.255.255.255
+ ip router isis 1
+
+!
+
+interface FastEthernet0/0
+
+ description To Linkmeup_R2
+ ip address 10.0.23.3 255.255.255.0
+ ip router isis 1
+ mpls ip
+
+!
+
+interface FastEthernet0/1
+
+ description To C3PO_2
+ ip vrf forwarding C3PO
+ ip address 192.168.1.1 255.255.255.0
+
+!
+
+interface FastEthernet1/0
+
+ description To TARS_2
+ ip vrf forwarding TARS
+ ip address 100.0.1.1 255.255.255.252
+
+!
+
+router ospf 2 vrf C3PO
+
+ redistribute bgp 64500 subnets
+ network 192.168.0.0 0.0.255.255 area 0
+ default-information originate
+
+!
+
+router isis 1
+
+ net 10.0000.0000.0003.00
+
+!
+
+router bgp 64500
+
+ neighbor 1.1.1.1 remote-as 64500
+ neighbor 1.1.1.1 update-source Loopback0
+
+ !
+
+ address-family vpnv4
+
+ neighbor 1.1.1.1 activate
+ neighbor 1.1.1.1 send-community both
+
+ !
+
+ address-family ipv4 vrf TARS
+
+ redistribute connected
+ neighbor 100.0.1.2 remote-as 64520
+ neighbor 100.0.1.2 activate
+ neighbor 100.0.1.2 default-originate
+
+ !
+
+ address-family ipv4 vrf C3PO
+
+ redistribute ospf 2 vrf C3PO match internal
+
+!
+
+ip prefix-list 1 seq 5 deny 172.16.0.0/12 le 32
+ip prefix-list 1 seq 10 deny 192.168.0.0/16 le 32
+ip prefix-list 1 seq 15 deny 10.0.0.0/8 le 32
+ip prefix-list 1 seq 20 permit 0.0.0.0/0 le 32
+
+!
+
+route-map To_Internet permit 10
+
+ match ip address prefix-list 1
+ set extcommunity rt  64500:11
+
+!
+
+mpls ldp router-id Loopback0
+
+TARS_2
+
+hostname TARS_2
+
+!
+
+ip cef
+
+!
+
+interface Loopback0
+
+ ip address 172.16.255.2 255.255.255.255
+
+!
+
+interface FastEthernet0/0
+
+ description To Linkmeup
+ ip address 100.0.1.2 255.255.255.252
+ ip nat outside
+
+!
+
+interface FastEthernet0/1
+
+ description To LAN
+ ip address 172.16.1.1 255.255.255.0
+ ip nat inside
+
+!
+
+router bgp 64520
+
+ network 172.16.1.0 mask 255.255.255.0
+ network 172.16.255.2 mask 255.255.255.255
+ neighbor 100.0.1.1 remote-as 64500
+
+!
+
+ip nat inside source list 100 interface FastEthernet0/0 overload
+
+!
+
+access-list 100 deny   ip 172.16.0.0 0.0.255.255 172.16.0.0 0.0.255.255
+access-list 100 permit ip 172.16.0.0 0.0.255.255 any
+
+PC1
+
+ ip 172.16.1.2 255.255.255.0 172.16.1.1
