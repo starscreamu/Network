@@ -1,0 +1,49 @@
+https://www.youtube.com/watch?v=ZfAxtNp_ZU0&t=1960s&ab_channel=Networkisreachable
+
+no ip route 0.0.0.0 0.0.0.0
+
+router ospf 1 
+no default-information originate always metric-type 1
+
+router bgp 64509
+neighbor 203.150.100.13 remote-as 64500 # To ISP which will give you default route
+
+router ospf 1
+redistribute bgp 64509 subnets
+default-information originate metric-type 1
+
+In order to get a default route via OSPF through BGP session with ISP to your network
+
+#############################################################
+hostname 
+balagan-router
+!
+router bgp 64501
+no synchronization
+bgp log-neighbor-changes
+network 101.0.0.0 mask 255.255.240.0
+neighbor 101.0.0.2 remote-as 64500
+neighbor 101.0.0.2 default-originate 
+neighbor 101.0.0.2 prefix-list DEFAULT out
+
+neighbor 101.0.0.6 remote-as 64502
+neighbor 101.0.0.10 remote-as 64503
+no auto-summary
+!
+ip prefix-list DEFAULT seq 5 permit 0.0.0.0/0
+hostname 
+PhCert-router
+!
+router bgp 64502
+no synchronization
+bgp log-neighbor-changes
+network 102.0.0.0 mask 255.255.248.0
+neighbor 101.0.0.5 remote-as 64501
+neighbor 102.0.0.2 remote-as 64500
+neighbor 102.0.0.2 default-originate 
+neighbor 102.0.0.2 prefix-list DEFAULT out
+neighbor 102.0.0.10 remote-as 64503
+no auto-summary
+!
+ip prefix-list DEFAULT seq 5 permit 0.0.0.0/0
+##################################################################
