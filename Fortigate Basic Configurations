@@ -1,0 +1,54 @@
+
+#Services
+
+config firewall service custom
+ edit "tcp_20675"
+  set comment "Your comment"
+  set tcp-portrange 20675
+ next
+ edit "tcp_21675"
+  set comment "Your comment"
+  set tcp-portrange 21675
+ next
+ edit "tcp_20676"
+  set comment "Your comment"
+  set tcp-portrange 20676
+ next
+ edit "tcp_21676"
+  set comment "Your comment]"
+  set tcp-portrange 21676
+ next
+end
+
+#Check services 
+
+show firewall service custom | grep -fi "20675\|21675\|20676\|21676"
+
+#VIP
+
+config firewall vip
+ edit "1.1.1.1:21675"
+  set comment "Your comment"
+  set service "tcp_21675"
+  set extip 1.1.1.1
+  set mappedip "10.0.0.1:21675"
+  set extintf "any"
+ next
+end
+
+#Policy
+
+config firewall policy
+ edit 0
+   set name "Your name"
+   set srcintf "port9" "port7"
+   set dstintf "VLAN_50"
+   set srcaddr "1.1.1.1/32 [Moscow Office Address]"
+   set dstaddr "2.2.2.2:20675" "3.3.3.3:20675"
+   set action accept
+   set schedule "always"
+   set service "tcp_20675"
+   set logtraffic all
+   set comments "Your comment"
+ next
+end
